@@ -17,7 +17,6 @@ Project Quant brings together historical backtesting, live intraday signal scann
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
 - [Configuration](#configuration)
 - [Running the App](#running-the-app)
 - [Data Requirements & Coverage](#data-requirements--coverage)
@@ -25,7 +24,6 @@ Project Quant brings together historical backtesting, live intraday signal scann
 - [Important Operational Notes](#important-operational-notes)
 - [Known Limitations](#known-limitations)
 - [Roadmap](#roadmap)
-- [License](#license)
 - [Author](#author)
 
 ---
@@ -125,27 +123,6 @@ project-quant/
 
 ---
 
-## Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/<your-username>/project-quant.git
-   cd project-quant
-   ```
-
-2. **Create and activate a virtual environment** (recommended)
-   ```bash
-   python -m venv venv
-   source venv/bin/activate      # Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
----
-
 ## Configuration
 
 ### Generating and setting your Kite Connect access token
@@ -225,7 +202,7 @@ A few behaviors are intentional design decisions or current constraints of the p
 
 In the interest of transparency, this project has a few known constraints as of this release:
 
-- Kite Connect credentials are hardcoded per-file rather than centralized in environment variables — a deliberate simplification for now, planned to move to `.env`-based configuration.
+- Kite Connect credentials are hardcoded per-file rather than centralized in environment variables.
 - The options data backtest currently requires manually pre-downloaded option-chain Parquet files for each trading day in the selected range; there is no automated bulk-downloader for options data yet (unlike the stock-only historical downloader).
 - The Live Signal Engine's underlying data cache is session-scoped and does not auto-refresh on a timer (see [Important Operational Notes](#important-operational-notes)).
 
@@ -233,17 +210,9 @@ In the interest of transparency, this project has a few known constraints as of 
 
 ## Roadmap
 
-- [ ] Centralize Kite Connect credentials into a single `.env`-driven config module
-- [ ] Automated options-chain historical data downloader (mirroring `historical_data_downloader.py`)
 - [ ] Scheduled auto-refresh for the Live Signal Engine's data cache
 - [ ] Configurable initial capital and position sizing in the Backtest Engine
 - [ ] Additional backtest strategies beyond momentum breakout
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ---
 
