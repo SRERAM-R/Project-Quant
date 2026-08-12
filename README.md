@@ -91,7 +91,7 @@ Runs a selected strategy across a chosen stock's historical price history and pr
 
 All return-based metrics (CAGR, Calmar) assume a fixed notional starting capital of **₹25,000** — this is a simplifying assumption for annualized-return calculations, not a constraint on position sizing.
 
-> 📖 Every metric shown on this page (Sharpe, Sortino, Calmar, expectancy, profit factor, drawdown, and more) is defined in detail in the **[Terminology Glossary](#terminology--glossary)** included with this project.
+> 📖 Every metric shown on this page (Sharpe, Sortino, Calmar, expectancy, profit factor, drawdown, and more) is defined in detail in the **[Project Quant Terminology Glossary](./Project%20Quant%20Terminology%20Glossary.pdf)** included with this project.
 
 ### 5. Backtest Engine (Stocks + Options)
 
@@ -100,8 +100,6 @@ Identical analytics suite to the Stocks backtest engine, but every signal genera
 **Notes on options mechanics modeled here:**
 - Only the **at-the-money strike** is considered by default — the engine does not currently backtest OTM or ITM strike selection.
 - In reality, F&O stock options are restricted from taking fresh positions in the **nearest-weekly/monthly expiry for the final 2 trading days before expiry**, due to SEBI's compulsory physical delivery norms for stock derivatives. This engine does not currently model that restriction — a live/production version of this strategy would need to account for it when close to expiry.
-
-> 📖 All options-specific and general performance terminology used on this page is defined in detail in the **[Terminology Glossary](#terminology--glossary)** included with this project.
 
 ---
 
@@ -294,7 +292,7 @@ This sample set is enough to inspect the data formats and pipeline structure, th
 
 The **Backtest Engine (Stocks)** and **Backtest Engine (Stocks + Options)** pages surface a large number of trading- and statistics-specific terms — VWAP, Sharpe Ratio, Sortino Ratio, Calmar Ratio, drawdown, expectancy, profit factor, ADX, DPO, and others.
 
-**A complete glossary explaining every one of these terms, specifically as used on both backtest pages, is provided as a PDF** (`docs/Project Quant - Terminology Glossary.pdf`) included in this repository. Refer to that document for definitions and the reasoning behind each metric rather than external sources, since a few conventions here (e.g., how breakeven trades are classified, or how "First Candle" fields are defined) are specific to this project's implementation.
+**A complete glossary explaining every one of these terms, specifically as used on both backtest pages, is provided as a PDF** - [Project Quant Terminology Glossary](./Project%20Quant%20Terminology%20Glossary.pdf) - included in this repository. Refer to that document for definitions and the reasoning behind each metric rather than external sources, since a few conventions here (e.g., how breakeven trades are classified, or how "First Candle" fields are defined) are specific to this project's implementation.
 
 ---
 
