@@ -17,6 +17,7 @@ Project Quant unifies historical backtesting, live intraday signal scanning, tec
   - [5. Backtest Engine (Stocks + Options)](#5-backtest-engine-stocks--options)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
+- [Repository Scope](#repository-scope)
 - [Prerequisites](#prerequisites)
 - [Configuration](#configuration)
 - [Running the App](#running-the-app)
@@ -38,7 +39,7 @@ Project Quant is a **Streamlit-based, multi-page analytics dashboard** that lets
 3. **Backtest** strategies over multiple years of historical minute-level data, with institutional-grade performance analytics (Sharpe, Sortino, Calmar, drawdown, equity curves, monthly heatmaps, and more) — for both the underlying stock and its mapped options contract.
 4. **Paper trade** F&O option contracts in real time against live Kite market data, with full position tracking, unrealized P&L, and a persistent trade log.
 
-The project is organized around a shared analytical core (`strategy.py`) so that the same indicator calculations, stock universe, and performance-metrics logic power every page — there is one source of truth for what "EMA9," "VWAP," or "Sharpe Ratio" means across the entire application.
+The project is organized around a shared analytical core (`strategy.py`) so that the same indicator calculations, stock universe, and performance-metrics logic power every page — there is one source of truth for what "EMA9," "VWAP," or "Sharpe Ratio" means across the entire application. *(Note: `strategy.py` and `paper_trading_terminal.py` are excluded from this public repository — see [Repository Scope](#repository-scope) for what that means for running the project as published.)*
 
 ---
 
@@ -59,12 +60,14 @@ Results are ranked by `% Change` from the day's open and presented in a live-upd
 
 ### 2. Crossover Tracker
 
-Continuously scans every stock in the universe for two categories of technical setups, updating every 3 minutes:
+Continuously scans every stock in the universe across **seven** live technical signals, updating every 5 minutes:
 
-- **Sustained Crossovers** — EMA9 / EMA21 / VWAP alignment holding consistently over a rolling window (bullish and bearish).
-- **Rejections** — a brief opposite-direction spike that gets rejected back into the prevailing trend, split into a trend phase, a spike phase, and a confirmation phase (bullish and bearish).
+- **Sustained Crossovers** — EMA9 / EMA21 / VWAP alignment holding consistently over a rolling window (bullish and bearish). Each direction has an independently configurable entry window and a separate, independently configurable exit window, so how quickly a stock is added versus how quickly it's removed can be tuned separately.
+- **Rejections** — a brief opposite-direction spike that gets rejected back into the prevailing trend, split into a trend phase, a spike phase, and a confirmation phase (bullish and bearish), with the same independently configurable exit logic as above.
+- **Abnormal Volume** — flags a candle whose volume spikes to several times the average of the preceding candles, a classic early signal of institutional participation or a breaking news event.
+- **Day High Breakout / Day Low Breakdown** — flags a stock closing decisively beyond its own intraday high or low on two consecutive candles, with a minimum time gap enforced from when that extreme was set (filtering out breakouts that are really just noise immediately following the extreme).
 
-Once a stock is flagged, it stays in the relevant table until the underlying condition breaks — giving a persistent, at-a-glance view of which stocks are currently in a confirmed technical state, without needing to re-run a scan.
+Sustained Crossover and Rejection entries persist in their table until their dedicated exit condition is met — not simply the moment the original entry condition weakens — giving a stable, at-a-glance view of confirmed technical states. Abnormal Volume and breakout events are logged as a running record of the session's occurrences for that stock, since they represent discrete events rather than a persisting state.
 
 ### 3. Paper Trading Terminal
 
@@ -123,19 +126,31 @@ project-quant/
 ├── main.py                       # Streamlit entry point — sidebar navigation & global theming
 ├── styles.py                     # Shared CSS/HTML styling and Plotly theme (single source of visual truth)
 ├── stocks_list.py                # Tradable stock universe, grouped by sector
-├── strategy.py                   # Core analytical engine — indicators, scanners, backtest strategies,
-│                                  # options-data mapping, and performance-analytics functions
+├── strategy.py                   # ⛔ NOT included in this repository — see "Repository Scope" below
 ├── live_stock_scanner.py         # Live Stock Scanner page
 ├── crossover_tracker.py          # Crossover Tracker page
-├── paper_trading_terminal.py     # Paper Trading Terminal page
+├── paper_trading_terminal.py     # ⛔ NOT included in this repository — see "Repository Scope" below
 ├── backtest_engine.py            # Backtest Engine (Stocks) page
 ├── options_backtest_engine.py    # Backtest Engine (Stocks + Options) page
 ├── generate_access_token.py      # One-off CLI script to generate a Kite Connect access token
 ├── get_historical_data.py        # One-off utility to bulk-download historical OHLC data (stocks)
 ├── download_options_data.py      # Daily utility to download historical intraday options data
+├── sample_data/                  # Sample historical data for a small set of stocks (see below)
 ├── requirements.txt              # Python dependencies
 └── README.md
 ```
+
+### ⚠️ Repository Scope
+
+This public repository intentionally **excludes two files: `strategy.py` and `paper_trading_terminal.py`.**
+
+Because `strategy.py` is the shared analytical core imported by every other page — indicators, scanners, backtest logic, and options-data mapping all live there — **this repository, as published, will not run end-to-end out of the box.** This is a deliberate scope decision for this public copy, not an oversight, and it isn't intended to misrepresent the project as immediately runnable by a stranger cloning it.
+
+To still allow meaningful exploration of the codebase and its output:
+
+- **Sample historical equity data** for three stocks — **HDFC Bank, Reliance Industries, and TCS** — is bundled directly in this repository, so the data structures, formats, and the general shape of the pipeline can be inspected without a live Kite Connect subscription.
+- **Sample historical options data for 5 trading days (01–05 June 2026)** is bundled as well, covering the same three stocks, so the options-backtest data flow can be reviewed similarly.
+- The full, functional codebase — including `strategy.py` and `paper_trading_terminal.py` — is available on request, and I'm glad to walk through it directly (including a live demo) in an interview setting.
 
 ---
 
@@ -201,6 +216,8 @@ This project does not currently centralize Kite credentials in one place. **You 
 
 Since the access token expires daily, **this needs to be repeated every trading day** before using any live-data page. This is a deliberate simplification for a single-user, local-first project — see [Known Limitations & Design Decisions](#known-limitations--design-decisions).
 
+> Note: `strategy.py` and `paper_trading_terminal.py` are excluded from this public repository — see [Repository Scope](#repository-scope). The list above reflects where credentials are configured in the full, private version of the codebase.
+
 ---
 
 ## Running the App
@@ -224,7 +241,7 @@ Navigate between pages using the sidebar.
 
 ## Data Requirements & Coverage
 
-This project does not ship with historical data. Run **`get_historical_data.py`** to populate your local data folder before using the stock backtest engine:
+This project does not ship with the full historical dataset. Run **`get_historical_data.py`** to populate your local data folder before using the stock backtest engine:
 
 ```bash
 python get_historical_data.py
@@ -256,16 +273,20 @@ Downloads/
     └── Historical Options Data/    # {date}.parquet — from download_options_data.py
 ```
 
-> **Note:** as of this release, `download_options_data.py` saves its output directly under `Downloads/` rather than into the `Historical Options Data/` subfolder shown above. Until this is aligned in a future update, you will need to manually move each downloaded `{date}.parquet` file into `Downloads/Stock Market/Historical Options Data/` so that `get_options_data()` (in `strategy.py`) can find it. `get_historical_data.py` already saves directly into the correct `Historical Stock Data/` subfolder and requires no manual step.
-
 **Historical data coverage differs by page:**
 
 | Page | Data Availability |
 |---|---|
 | **Backtest Engine (Stocks)** | Historical data from **01 January 2021** to **31 July 2026**. |
-| **Backtest Engine (Stocks + Options)** | Historical options data from **01 July 2026** onward, and only for the specific trading days you've individually downloaded via `download_options_data.py`. |
+| **Backtest Engine (Stocks + Options)** | Historical options data from **01 June 2026** onward, and only for the specific trading days you've individually downloaded via `download_options_data.py`. |
 
 Selecting a date range outside these windows, or for a day you haven't downloaded options data for, will return incomplete or empty results with an on-screen message rather than a crash.
+
+**For quick exploration without a Kite Connect subscription or the full data pipeline**, the `sample_data/` folder bundled with this repository includes:
+- Historical equity data for **HDFC Bank, Reliance Industries, and TCS**
+- Historical options data for these same three stocks, covering **01–05 June 2026**
+
+This sample set is enough to inspect the data formats and pipeline structure, though running the backtest engines against it still requires `strategy.py` — see [Repository Scope](#repository-scope).
 
 ---
 
@@ -281,7 +302,7 @@ The **Backtest Engine (Stocks)** and **Backtest Engine (Stocks + Options)** page
 
 A few behaviors are intentional design decisions or current constraints of the project, not bugs — worth knowing before you use it:
 
-- **The Live Stock Scanner and Crossover Tracker cache stock data once per session** and refresh it automatically on a timer (5 minutes and 3 minutes respectively). Restarting the Streamlit server clears this cache and triggers a fresh download on next load.
+- **The Live Stock Scanner and Crossover Tracker cache stock data once per session** and refresh it automatically on a timer (5 minutes). Restarting the Streamlit server clears this cache and triggers a fresh download on next load.
 - **Live Stock Scanner results reflect the exact moment "Run Scan" is clicked** — results are intentionally not persisted across the page's autorefresh cycle, so every scan always reflects the latest available candle data rather than a stale snapshot.
 - **Paper Trading Terminal auto-refreshes every 2 seconds** while open, to keep live prices current during an active or pending trade.
 - **Access tokens expire daily** — see [Configuration](#configuration).
@@ -337,4 +358,3 @@ In the interest of transparency, this section documents constraints and tradeoff
 
 **Sreram R**
 Built as an end-to-end exploration of quantitative trading infrastructure — from raw market data, through signal generation and backtesting, to simulated live execution — using tools a real trading desk would recognize.
-
