@@ -12,13 +12,6 @@ import streamlit as st
 import plotly.io as pio
 import plotly.graph_objects as go
 
-# -----------------------------------------------------------------------------------------------------------------------------------------------------
-# Brand palette
-# -----------------------------------------------------------------------------------------------------------------------------------------------------
-# Kept as constants so every P&L colour decision (Python or CSS) traces back to one place.
-# Note: the CSS block below hardcodes these same hex values since inline <style> strings can't reference Python variables —
-# if you change a colour here, update the matching value in the CSS too.
-# -----------------------------------------------------------------------------------------------------------------------------------------------------
 COLOR_POSITIVE = "#16a34a"   # green  — gains / good outcomes
 COLOR_NEGATIVE = "#dc2626"   # red    — losses / bad outcomes
 COLOR_NEUTRAL  = "#1f2937"   # slate  — non-numeric / fallback text
@@ -28,11 +21,6 @@ COLOR_MUTED    = "#6b7280"   # grey   — secondary labels
 FONT_FAMILY = "Poppins"
 
 def load_styles() -> None:
-
-    """
-    Inject global CSS: layout spacing, font, metric-card, and widget styling. Call once per page, near the top, before any `st.metric`
-    or layout calls.
-    """
 
     st.markdown(
         f"""
@@ -112,11 +100,6 @@ def load_styles() -> None:
 
 def load_plotly_theme() -> None:
 
-    """
-    Register and activate a shared Plotly template matching the app's palette.Call once at app startup. Every `go.Figure` / `px.*`
-    chart created afterward will automatically use this template.
-    """
-
     pio.templates["quant"] = go.layout.Template(
         layout=go.Layout(
             font=dict(family=FONT_FAMILY, size=12, color=COLOR_NEUTRAL),
@@ -133,18 +116,6 @@ def load_plotly_theme() -> None:
     pio.templates.default = "quant"
 
 def metric_card(label: str, value, positive_is_good: bool = True) -> None:
-
-    """
-    Render a custom HTML metric card with sign-aware colour coding. Used instead of `st.metric` when the delta arrow isn't wanted,
-    or when the "good" direction is inverted (e.g. drawdown, where lower is better).
-
-    Args:
-        label: Card title shown above the value (e.g. "Net P&L").
-        value: Value to display — numeric or pre-formatted string.
-        positive_is_good: If False, flips the colour logic (useful for
-            metrics like drawdown or risk exposure where a positive
-            number is actually a bad outcome).
-    """
 
     try:
         numeric_value = float(str(value).replace(",", ""))
@@ -167,18 +138,6 @@ def metric_card(label: str, value, positive_is_good: bool = True) -> None:
     )
 
 def color_pnl(val: float) -> str:
-
-    """Pandas Styler helper — colours a numeric cell green/red by sign.
-
-    Usage:
-        df.style.map(color_pnl, subset=["P&L"])
-
-    Args:
-        val: Numeric cell value being styled.
-
-    Returns:
-        A CSS declaration string for pandas' Styler API.
-    """
 
     color = COLOR_POSITIVE if val >= 0 else COLOR_NEGATIVE
     return f"color: {color}; font-weight: 600"
