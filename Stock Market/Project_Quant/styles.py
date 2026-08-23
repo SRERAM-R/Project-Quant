@@ -1,7 +1,7 @@
 """
 Project Quant - Stock Universe.
 
-Single source of truth for the dashboard's look and feel — fonts, metric card styling, and the shared Plotly theme. Every 
+Single source of truth for the dashboard's visuals — fonts, metric card styling, and the shared Plotly theme. Every 
 page calls `load_styles()` + `load_plotly_theme()  once at the top so the whole app stays visually consistent without 
 repeating CSS across files.
 
@@ -21,7 +21,6 @@ COLOR_MUTED    = "#6b7280"   # grey   — secondary labels
 FONT_FAMILY = "Poppins"
 
 def load_styles() -> None:
-
     st.markdown(
         f"""
         <style>
@@ -99,7 +98,6 @@ def load_styles() -> None:
     )
 
 def load_plotly_theme() -> None:
-
     pio.templates["quant"] = go.layout.Template(
         layout=go.Layout(
             font=dict(family=FONT_FAMILY, size=12, color=COLOR_NEUTRAL),
@@ -116,7 +114,6 @@ def load_plotly_theme() -> None:
     pio.templates.default = "quant"
 
 def metric_card(label: str, value, positive_is_good: bool = True) -> None:
-
     try:
         numeric_value = float(str(value).replace(",", ""))
         is_good = numeric_value >= 0 if positive_is_good else numeric_value < 0
@@ -138,6 +135,5 @@ def metric_card(label: str, value, positive_is_good: bool = True) -> None:
     )
 
 def color_pnl(val: float) -> str:
-
     color = COLOR_POSITIVE if val >= 0 else COLOR_NEGATIVE
     return f"color: {color}; font-weight: 600"
