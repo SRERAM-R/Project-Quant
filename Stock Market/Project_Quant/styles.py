@@ -1,15 +1,11 @@
 """
-========================================================================================================================================================
- PROJECT QUANT | UI Styling
-========================================================================================================================================================
+Project Quant - Stock Universe.
 
- Module       : styles.py
+Single source of truth for the dashboard's look and feel — fonts, metric card styling, and the shared Plotly theme. Every 
+page calls `load_styles()` + `load_plotly_theme()  once at the top so the whole app stays visually consistent without 
+repeating CSS across files.
 
- Purpose      : Single source of truth for the dashboard's look and feel — fonts, metric card styling, and the shared Plotly theme.
-                Every page calls `load_styles()` + `load_plotly_theme()  once at the top so the whole app stays visually consistent
-                without repeating CSS across files.
-
-========================================================================================================================================================
+Author: Sreram R
 """
 
 import streamlit as st
