@@ -1,6 +1,6 @@
 # 📊 Project Quant
 
-**A full-stack quantitative trading analytics platform for Indian equities and F&O — built with Streamlit, pandas, and the Zerodha Kite Connect API.**
+**A quantitative trading analytics platform for Indian equities — built with Streamlit, pandas, and the Zerodha Kite Connect API.**
 
 Project Quant unifies historical backtesting, live intraday signal scanning, technical crossover tracking, and options-aware paper trading within a single, cohesive dashboard. It is engineered to feel like an internal tool at a proprietary trading desk — fast, data-dense, and grounded in real market mechanics rather than simplified, illustrative examples.
 
